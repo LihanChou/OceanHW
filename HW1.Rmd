@@ -1,0 +1,111 @@
+---
+title: "HW1"
+author: "Lihan"
+date: "2021/10/15"
+output: html_document
+---
+
+```{Check data}
+summary(cars)
+getwd()
+temp=read.csv('rairuoho.csv',header=T)
+head(temp)
+
+```
+
+[1] "D:/R_ocean"
+
+day3 day4 day5 day6 day7 day8 germinate    bed treatment spatial1 spatial2 row
+1    2   13   34   85  112  121        18 paper4  nutrient    upper     left   1
+2    5   22   60   95  108  116        19 mould1  nutrient    upper     left   2
+3    5   26   34   73   96  111        18 paper8  nutrient    upper     left   3
+4    7   24   61   91  101  117        17 mould2  nutrient    upper     left   4
+5    0    9   31   61   92  116        12 paper4  nutrient    lower     left   5
+6    7   30   66   91  116  129        18 mould1  nutrient    lower     left   6
+
+
+```{Remove variables row and column}
+temp$row<-NULL
+temp$column<-NULL
+head(temp) #check
+```
+
+ day3 day4 day5 day6 day7 day8 germinate    bed treatment spatial1 spatial2
+1    2   13   34   85  112  121        18 paper4  nutrient    upper     left
+2    5   22   60   95  108  116        19 mould1  nutrient    upper     left
+3    5   26   34   73   96  111        18 paper8  nutrient    upper     left
+4    7   24   61   91  101  117        17 mould2  nutrient    upper     left
+5    0    9   31   61   92  116        12 paper4  nutrient    lower     left
+6    7   30   66   91  116  129        18 mould1  nutrient    lower     left
+
+
+```{Replace variable name }
+ifelse(temp$treatment=='nutrient','enriched','water')
+temp$treatment<-ifelse(temp$treatment=='nutrient','enriched','water')
+heab(temp) # check
+```
+
+[1] "enriched" "enriched" "enriched" "enriched" "enriched" "enriched" "enriched"
+ [8] "enriched" "water"    "water"    "water"    "water"    "water"    "water"   
+[15] "water"    "water"    "enriched" "enriched" "enriched" "enriched" "enriched"
+[22] "enriched" "enriched" "enriched" "water"    "water"    "water"    "water"   
+[29] "water"    "water"    "water"    "water"    "enriched" "enriched" "enriched"
+[36] "enriched" "enriched" "enriched" "enriched" "enriched" "water"    "water"   
+[43] "water"    "water"    "water"    "water"    "water"    "water" 
+
+day3 day4 day5 day6 day7 day8 germinate    bed treatment spatial1 spatial2
+1    2   13   34   85  112  121        18 paper4  enriched    upper     left
+2    5   22   60   95  108  116        19 mould1  enriched    upper     left
+3    5   26   34   73   96  111        18 paper8  enriched    upper     left
+4    7   24   61   91  101  117        17 mould2  enriched    upper     left
+5    0    9   31   61   92  116        12 paper4  enriched    lower     left
+6    7   30   66   91  116  129        18 mould1  enriched    lower     left
+
+
+```{Reformat }
+library(tidyr)
+temp2<-temp
+temp2$germinate<-NULL
+temp2$treatment<-NULL
+temp2$spatial1<-NULL
+temp2$spatial2<-NULL
+head(temp2)
+temp_re<- temp2 %>%  pivot_longer(cols=-bed,names_to = c("days"),values_to = "length")
+temp_re #check
+
+```
+
+ day3 day4 day5 day6 day7 day8    bed
+1    2   13   34   85  112  121 paper4
+2    5   22   60   95  108  116 mould1
+3    5   26   34   73   96  111 paper8
+4    7   24   61   91  101  117 mould2
+5    0    9   31   61   92  116 paper4
+6    7   30   66   91  116  129 mould1
+
+# A tibble: 6 x 3
+  bed    days  length
+  <chr>  <chr>  <int>
+1 paper4 day3       2
+2 paper4 day4      13
+3 paper4 day5      34
+4 paper4 day6      85
+5 paper4 day7     112
+6 paper4 day8     121
+
+```{Merge variables  }
+library(tidyr)
+help("unite")
+unite(temp,"Spatial",c("spatial1","spatial2"),sep="-",remove=T)
+
+```
+day3 day4 day5 day6 day7 day8 germinate    bed treatment      Spatial
+1     2   13   34   85  112  121        18 paper4  enriched   upper-left
+2     5   22   60   95  108  116        19 mould1  enriched   upper-left
+3     5   26   34   73   96  111        18 paper8  enriched   upper-left
+4     7   24   61   91  101  117        17 mould2  enriched   upper-left
+5     0    9   31   61   92  116        12 paper4  enriched   lower-left
+6     7   30   66   91  116  129        18 mould1  enriched   lower-left
+7     0   11   26   61   92  109        19 paper8  enriched   lower-left
+8     5   31   78  110  121  126        15 mould2  enriched   lower-left
+9     2   17   37   74   81   81        19 paper4     water   upper-left
